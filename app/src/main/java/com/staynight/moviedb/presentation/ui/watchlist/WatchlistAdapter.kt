@@ -1,14 +1,14 @@
-package com.staynight.moviedb.presentation.ui.home
+package com.staynight.moviedb.presentation.ui.watchlist
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.staynight.moviedb.data.models.Movie
-import com.staynight.moviedb.databinding.ItemMovieBinding
+import com.staynight.moviedb.databinding.ItemWatchlistBinding
 
-class MoviesAdapter(private val listener: (id: Int, mediaType: String, addToWatchList: Boolean) -> Unit) :
-    RecyclerView.Adapter<MoviesAdapter.MoviesViewHolder>() {
+class WatchlistAdapter(private val listener: (id: Int, mediaType: String, addToWatchList: Boolean) -> Unit) :
+    RecyclerView.Adapter<WatchlistAdapter.WatchlistViewHolder>() {
 
     companion object {
         private const val IMAGE_URL = "https://image.tmdb.org/t/p/w500/"
@@ -16,12 +16,12 @@ class MoviesAdapter(private val listener: (id: Int, mediaType: String, addToWatc
 
     private var movies: List<Movie> = listOf()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MoviesViewHolder {
-        val view = ItemMovieBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return MoviesViewHolder(view)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WatchlistViewHolder {
+        val view = ItemWatchlistBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return WatchlistViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: MoviesViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: WatchlistViewHolder, position: Int) {
         holder.bind(movies[position])
     }
 
@@ -32,7 +32,7 @@ class MoviesAdapter(private val listener: (id: Int, mediaType: String, addToWatc
         notifyDataSetChanged()
     }
 
-    inner class MoviesViewHolder(private val item: ItemMovieBinding) :
+    inner class WatchlistViewHolder(private val item: ItemWatchlistBinding) :
         RecyclerView.ViewHolder(item.root) {
         fun bind(movie: Movie) = with(item) {
             tvMovieTitle.text = movie.title

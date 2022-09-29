@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.staynight.moviedb.data.network.Api
 import com.staynight.moviedb.data.network.AuthInterceptor
+import com.staynight.moviedb.data.storage.SessionManager
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
@@ -54,6 +55,6 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideAuthInterceptor() : AuthInterceptor = AuthInterceptor()
+    fun provideAuthInterceptor(sessionManager: SessionManager) : AuthInterceptor = AuthInterceptor(sessionManager)
 
 }

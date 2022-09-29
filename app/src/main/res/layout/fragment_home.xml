@@ -151,16 +151,18 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_movies"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="29dp"
+        android:layout_marginTop="31dp"
         android:orientation="vertical"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/hsv_genres"
-        android:layout_marginHorizontal="29dp"
-        tools:listitem="@layout/item_movie"
-        android:layout_marginTop="31dp"/>
+        tools:listitem="@layout/item_movie" />
 
     <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_watchlist"
         android:layout_width="134dp"
         android:layout_height="42dp"
         android:text="@string/watch_list"
