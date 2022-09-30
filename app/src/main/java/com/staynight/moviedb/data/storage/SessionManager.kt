@@ -2,7 +2,9 @@ package com.staynight.moviedb.data.storage
 
 import android.content.SharedPreferences
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class SessionManager @Inject constructor(private val sharedPreferences: SharedPreferences) {
 
     companion object {

@@ -10,7 +10,9 @@ import com.staynight.moviedb.utils.binding.BindingFragment
 import javax.inject.Inject
 
 class WatchlistFragment: BindingFragment<FragmentWatchlistBinding>(FragmentWatchlistBinding::inflate) {
-    private val adapter = WatchlistAdapter(){id, mediaType, addToWatchList ->  }
+    private val adapter = WatchlistAdapter(){id, mediaType, addToWatchList ->
+        viewModel.addToWatchList(id, mediaType, addToWatchList)
+    }
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private val viewModel by viewModels<WatchlistViewModel> { viewModelFactory }

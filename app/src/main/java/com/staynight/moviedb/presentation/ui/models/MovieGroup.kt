@@ -4,5 +4,5 @@ import com.staynight.moviedb.data.models.Movie
 
 data class MovieGroup(
     val title: String,
-    val movies: List<Movie>
+    val movies: MutableList<Movie>
 )
