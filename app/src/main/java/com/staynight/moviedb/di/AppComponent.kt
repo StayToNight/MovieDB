@@ -8,13 +8,16 @@ import dagger.Component
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [
-    AppModule::class,
-    NetworkModule::class,
-    RepositoryModule::class,
-    ViewModelModule::class,
-    ViewModelBuilder::class,
-    StorageModule::class])
+@Component(
+    modules = [
+        AppModule::class,
+        NetworkModule::class,
+        RepositoryModule::class,
+        ViewModelModule::class,
+        ViewModelBuilder::class,
+        StorageModule::class,
+        MapperModule::class]
+)
 interface AppComponent {
     fun injectHomeFragment(homeFragment: HomeFragment)
     fun injectAuthFragment(authFragment: AuthFragment)

@@ -1,6 +1,10 @@
 package com.staynight.moviedb.data.models
 
+import com.google.gson.annotations.SerializedName
+
 data class CodeMessageResponseData(
-    val status_code: Int,
-    val status_message: String
+    @SerializedName("status_code")
+    val statusCode: Int,
+    @SerializedName("status_message")
+    val statusMessage: String
 )

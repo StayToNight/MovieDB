@@ -6,8 +6,8 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.transform.RoundedCornersTransformation
 import com.staynight.moviedb.R
-import com.staynight.moviedb.data.models.Movie
 import com.staynight.moviedb.databinding.ItemMovieBinding
+import com.staynight.moviedb.domain.models.Movie
 
 class MoviesAdapter(private val listener: (id: Int, mediaType: String, addToWatchList: Boolean) -> Unit) :
     RecyclerView.Adapter<MoviesAdapter.MoviesViewHolder>() {
@@ -38,21 +38,21 @@ class MoviesAdapter(private val listener: (id: Int, mediaType: String, addToWatc
 
     inner class MoviesViewHolder(private val item: ItemMovieBinding) :
         RecyclerView.ViewHolder(item.root) {
-        fun bind(movie: Movie) = with(item) {
-            tvMovieTitle.text = movie.title
-            tvMovieDate.text = movie.release_date
-            tvMovieRate.text = movie.vote_average.toString()
-            ivMovie.load(IMAGE_URL + movie.poster_path) {
+        fun bind(movieData: Movie) = with(item) {
+            tvMovieTitle.text = movieData.title
+            tvMovieDate.text = movieData.releaseDate
+            tvMovieRate.text = movieData.voteAverage.toString()
+            ivMovie.load(IMAGE_URL + movieData.posterPath) {
                 crossfade(true)
                 placeholder(R.drawable.background_buttons)
                 transformations(RoundedCornersTransformation(16.toFloat()))
                 error(com.google.android.material.R.drawable.mtrl_ic_error)
             }
-            tbAddToWatchlist.isChecked = movie.atWatchlist
+            tbAddToWatchlist.isChecked = movieData.atWatchlist
             tbAddToWatchlist.setOnClickListener {
-                if (movie.id != null) {
-                    listener.invoke(movie.id, "movie", tbAddToWatchlist.isChecked)
-                    movie.atWatchlist = tbAddToWatchlist.isChecked
+                if (movieData.id != null) {
+                    listener.invoke(movieData.id, "movie", tbAddToWatchlist.isChecked)
+                    movieData.atWatchlist = tbAddToWatchlist.isChecked
                 }
             }
         }

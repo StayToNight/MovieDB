@@ -4,8 +4,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
-import com.staynight.moviedb.data.models.Movie
 import com.staynight.moviedb.databinding.ItemWatchlistBinding
+import com.staynight.moviedb.domain.models.Movie
 
 class WatchlistAdapter(private val listener: (id: Int, mediaType: String, addToWatchList: Boolean) -> Unit) :
     RecyclerView.Adapter<WatchlistAdapter.WatchlistViewHolder>() {
@@ -36,9 +36,9 @@ class WatchlistAdapter(private val listener: (id: Int, mediaType: String, addToW
         RecyclerView.ViewHolder(item.root) {
         fun bind(movie: Movie) = with(item) {
             tvMovieTitle.text = movie.title
-            tvMovieDate.text = movie.release_date
-            tvMovieRate.text = movie.vote_average.toString()
-            ivMovie.load(IMAGE_URL + movie.poster_path) {
+            tvMovieDate.text = movie.releaseDate
+            tvMovieRate.text = movie.voteAverage.toString()
+            ivMovie.load(IMAGE_URL + movie.posterPath) {
                 crossfade(true)
             }
             tbAddToWatchlist.isChecked = movie.atWatchlist

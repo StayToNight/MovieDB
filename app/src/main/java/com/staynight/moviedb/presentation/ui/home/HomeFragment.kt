@@ -51,7 +51,7 @@ class HomeFragment : BindingFragment<FragmentHomeBinding>(FragmentHomeBinding::i
         setupObservers()
         setupListeners()
 
-        viewModel.getAll()
+        viewModel.getHomePage()
 
     }
 

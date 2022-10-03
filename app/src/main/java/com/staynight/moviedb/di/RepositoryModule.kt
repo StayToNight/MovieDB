@@ -1,5 +1,6 @@
 package com.staynight.moviedb.di
 
+import com.staynight.moviedb.data.mappers.MoviesDataMapper
 import com.staynight.moviedb.data.network.Api
 import com.staynight.moviedb.data.repository.AuthRepositoryImpl
 import com.staynight.moviedb.data.repository.MovieRepositoryImpl
@@ -19,7 +20,7 @@ class RepositoryModule {
 
     @Singleton
     @Provides
-    fun provideMovieRepository(api: Api): MovieRepository {
-        return MovieRepositoryImpl(api)
+    fun provideMovieRepository(api: Api, moviesDataMapper: MoviesDataMapper): MovieRepository {
+        return MovieRepositoryImpl(api, moviesDataMapper)
     }
 }
