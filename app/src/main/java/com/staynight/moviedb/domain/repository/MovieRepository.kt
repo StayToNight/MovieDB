@@ -2,7 +2,7 @@ package com.staynight.moviedb.domain.repository
 
 import com.staynight.moviedb.data.models.CodeMessageResponseData
 import com.staynight.moviedb.domain.models.Movies
-import com.staynight.moviedb.presentation.ui.models.MovieGroup
+import com.staynight.moviedb.domain.models.MovieGroup
 import io.reactivex.Single
 
 interface MovieRepository {

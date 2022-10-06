@@ -1,6 +1,8 @@
 package com.staynight.moviedb.presentation.ui.home
 
 import android.os.Bundle
+import android.os.Handler
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
@@ -64,9 +66,13 @@ class HomeFragment : BindingFragment<FragmentHomeBinding>(FragmentHomeBinding::i
                 is HomeViewModel.State.NewMovies -> {
                     when (state.id) {
                         0 -> {
+                            val rvState = adapter.rvs[0].layoutManager?.onSaveInstanceState()
                             adapter.getMovies()[0].movies.addAll(state.movies)
-                            adapter.notifyDataSetChanged()
-                            currentRv?.scrollToPosition((currentRv?.adapter as MoviesAdapter).getMovies().size - 1)
+                            adapter.notifyItemChanged(0)
+                            Handler().postDelayed({
+                                Log.e("RV", "scroll")
+                                adapter.rvs[0].layoutManager?.onRestoreInstanceState(rvState)
+                            }, 2000)
                         }
                         1 -> {
                             adapter.getMovies()[1].movies.addAll(state.movies)

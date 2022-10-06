@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.staynight.moviedb.domain.models.Movie
 import com.staynight.moviedb.domain.usecase.*
-import com.staynight.moviedb.presentation.ui.models.MovieGroup
+import com.staynight.moviedb.domain.models.MovieGroup
 import com.staynight.moviedb.utils.helpers.DisposeBagViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers

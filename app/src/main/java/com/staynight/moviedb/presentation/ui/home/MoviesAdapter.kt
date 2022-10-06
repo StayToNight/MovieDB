@@ -16,7 +16,7 @@ class MoviesAdapter(private val listener: (id: Int, mediaType: String, addToWatc
         private const val IMAGE_URL = "https://image.tmdb.org/t/p/w500/"
     }
 
-    private var movies: MutableList<Movie> = mutableListOf()
+    private var movies: List<Movie> = arrayListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MoviesViewHolder {
         val view = ItemMovieBinding.inflate(LayoutInflater.from(parent.context), parent, false)

@@ -6,7 +6,7 @@ import com.staynight.moviedb.data.models.CodeMessageResponseData
 import com.staynight.moviedb.data.network.Api
 import com.staynight.moviedb.domain.models.Movies
 import com.staynight.moviedb.domain.repository.MovieRepository
-import com.staynight.moviedb.presentation.ui.models.MovieGroup
+import com.staynight.moviedb.domain.models.MovieGroup
 import io.reactivex.Single
 import io.reactivex.functions.Function3
 import javax.inject.Inject

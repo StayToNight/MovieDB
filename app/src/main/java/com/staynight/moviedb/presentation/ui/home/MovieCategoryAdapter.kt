@@ -1,12 +1,11 @@
 package com.staynight.moviedb.presentation.ui.home
 
 import android.os.Handler
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.staynight.moviedb.databinding.ItemRvMoviesBinding
-import com.staynight.moviedb.presentation.ui.models.MovieGroup
+import com.staynight.moviedb.domain.models.MovieGroup
 
 class MovieCategoryAdapter(
     private val addToWatchListListener: (id: Int, mediaType: String, addToWatchList: Boolean) -> Unit,
@@ -14,6 +13,7 @@ class MovieCategoryAdapter(
 ) : RecyclerView.Adapter<MovieCategoryAdapter.MovieGroupViewHolder>() {
 
     private var movies: List<MovieGroup> = listOf()
+    val rvs: MutableList<RecyclerView> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieGroupViewHolder {
         val view = ItemRvMoviesBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -36,12 +36,18 @@ class MovieCategoryAdapter(
     inner class MovieGroupViewHolder(private val item: ItemRvMoviesBinding) :
         RecyclerView.ViewHolder(item.root) {
         fun bind(movieGroup: MovieGroup) = with(item) {
+            rvs.add(rvMoviesByCategories)
             fun createScrollListener(){
                 rvMoviesByCategories.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                     override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                         super.onScrollStateChanged(recyclerView, newState)
                         if (!recyclerView.canScrollHorizontally(1)) {
                             newMoviesListener.invoke(adapterPosition, recyclerView)
+                            rvMoviesByCategories.clearOnScrollListeners()
+                            Handler().postDelayed(
+                                {createScrollListener()},
+                                2000
+                            )
                         }
                     }
                 })
