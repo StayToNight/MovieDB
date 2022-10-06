@@ -1,12 +1,15 @@
 package com.staynight.moviedb.presentation.ui.home
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.staynight.moviedb.domain.models.Movie
+import com.staynight.moviedb.domain.models.Movies
 import com.staynight.moviedb.domain.usecase.*
-import com.staynight.moviedb.domain.models.MovieGroup
 import com.staynight.moviedb.utils.helpers.DisposeBagViewModel
+import com.staynight.moviedb.utils.helpers.Paginator
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
@@ -19,12 +22,69 @@ class HomeViewModel @Inject constructor(
     private val getWatchlistUseCase: GetWatchlistUseCase,
     private val getHomePageUseCase: GetHomePageUseCase
 ) : DisposeBagViewModel() {
-    private val state = MutableLiveData<State>()
-    val liveData: LiveData<State> = state
-    private val categories = mutableListOf<MovieGroup>()
-    private var topPage = 1
-    private var popPage = 1
-    private var upPage = 1
+
+    var topRatedState by mutableStateOf(State(title = "Top rated"))
+    var popularState by mutableStateOf(State(title = "Popular"))
+    var upcomingState by mutableStateOf(State(title = "Upcoming"))
+    val paginatorTopRated = Paginator(
+        initialKey = topRatedState.page,
+        onLoadUpdated = { topRatedState = topRatedState.copy(isLoading = it) },
+        onRequest = { getTopRatedMoviesUseCase.getTopRatedMovies(it) },
+        getNextKey = { topRatedState.page + 1 },
+        onError = { topRatedState = topRatedState.copy(error = it.toString()) },
+        onSuccess = { items, newKey ->
+            topRatedState = topRatedState.copy(
+                movies = topRatedState.movies + (items.results ?: emptyList()),
+                page = newKey,
+                endReached = items.results.isNullOrEmpty()
+            )
+        }
+    )
+    val paginatorPopular = Paginator(
+        initialKey = popularState.page,
+        onLoadUpdated = { popularState = popularState.copy(isLoading = it) },
+        onRequest = { getPopularMoviesUseCase.getPopularMovies(it) },
+        getNextKey = { popularState.page + 1 },
+        onError = { popularState = popularState.copy(error = it.toString()) },
+        onSuccess = { items, newKey ->
+            popularState = popularState.copy(
+                movies = popularState.movies + (items.results ?: emptyList()),
+                page = newKey,
+                endReached = items.results.isNullOrEmpty()
+            )
+        }
+    )
+    val paginatorUpcoming = Paginator(
+        initialKey = upcomingState.page,
+        onLoadUpdated = { upcomingState = upcomingState.copy(isLoading = it) },
+        onRequest = { getUpcomingMoviesUseCase.getUpcomingMovies(it) },
+        getNextKey = { upcomingState.page + 1 },
+        onError = { upcomingState = upcomingState.copy(error = it.toString()) },
+        onSuccess = { items, newKey ->
+            upcomingState = upcomingState.copy(
+                movies = upcomingState.movies + (items.results ?: emptyList()),
+                page = newKey,
+                endReached = items.results.isNullOrEmpty()
+            )
+        }
+    )
+
+    init {
+        loadNextItems(paginatorTopRated)
+        loadNextItems(paginatorPopular)
+        loadNextItems(paginatorUpcoming)
+    }
+
+    fun loadNextItems(paginator: Paginator<Int, Movies>) {
+        disposeBag.add(Observable.just {
+            paginator.loadNextItems()
+        }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .subscribe {
+                it.invoke()
+            })
+    }
 
     fun addToWatchList(mediaId: Int, mediaType: String, addToWatchlist: Boolean) {
         val add = addToWatchlistUseCase.addToWatchList(mediaId, mediaType, addToWatchlist)
@@ -37,72 +97,34 @@ class HomeViewModel @Inject constructor(
         disposeBag.add(add)
     }
 
-    fun getHomePage() {
-        disposeBag.add(
-            getHomePageUseCase.getHomePage()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe { value ->
-                    categories.addAll(value)
-                    getWatchList()
-                }
-        )
-    }
+//    private fun getWatchList() {
+//        disposeBag.add(getWatchlistUseCase.getWatchlist()
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .subscribeOn(Schedulers.io())
+//            .subscribe(
+//                { value ->
+//                    categories.forEach { category ->
+//                        category.movies.forEach { movie ->
+//                            value.results?.forEach {
+//                                if (movie.title == it.title) {
+//                                    movie.atWatchlist = true
+//                                }
+//                            }
+//                        }
+//                    }
+//                    state.value = State.Movies(categories)
+//                },
+//                { error -> Log.e("WATCHLIST", error.toString()) }
+//            )
+//        )
+//    }
 
-    fun getTopRatedMovies(id: Int) {
-        disposeBag.add(getTopRatedMoviesUseCase.getTopRatedMovies(++topPage)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ value ->
-                state.value = State.NewMovies(value.results ?: emptyList(), id)
-            }, {})
-        )
-    }
-
-    fun getPopularMovies(id: Int) {
-        disposeBag.add(getPopularMoviesUseCase.getPopularMovies(++popPage)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ value ->
-                state.value = State.NewMovies(value.results ?: emptyList(), id)
-            }, {})
-        )
-    }
-
-    fun getUpcomingMovies(id: Int) {
-        disposeBag.add(getUpcomingMoviesUseCase.getUpcomingMovies(++upPage)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ value ->
-                state.value = State.NewMovies(value.results ?: emptyList(), id)
-            }, {})
-        )
-    }
-
-    private fun getWatchList() {
-        disposeBag.add(getWatchlistUseCase.getWatchlist()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.io())
-            .subscribe(
-                { value ->
-                    categories.forEach { category ->
-                        category.movies.forEach { movie ->
-                            value.results?.forEach {
-                                if (movie.title == it.title) {
-                                    movie.atWatchlist = true
-                                }
-                            }
-                        }
-                    }
-                    state.value = State.Movies(categories)
-                },
-                { error -> Log.e("WATCHLIST", error.toString()) }
-            )
-        )
-    }
-
-    sealed class State {
-        data class Movies(val movies: List<MovieGroup>) : State()
-        data class NewMovies(val movies: List<Movie>, val id: Int) : State()
-    }
+    data class State(
+        val isLoading: Boolean = false,
+        val movies: List<Movie> = emptyList(),
+        val error: String? = null,
+        val endReached: Boolean = false,
+        val page: Int = 1,
+        val title: String
+    )
 }

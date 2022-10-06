@@ -61,9 +61,9 @@ class MovieRepositoryImpl @Inject constructor(
             getUpcomingMovies(),
             Function3<Movies, Movies, Movies, List<MovieGroup>> { t1, t2, t3 ->
                 return@Function3 listOf(
-                    MovieGroup("Top Rated", t1.results?.toMutableList() ?: mutableListOf()),
-                    MovieGroup("Popular", t2.results?.toMutableList() ?: mutableListOf()),
-                    MovieGroup("Upcoming", t3.results?.toMutableList() ?: mutableListOf())
+                    MovieGroup("Top Rated", t1.results?.toMutableList() ?: mutableListOf(), 1),
+                    MovieGroup("Popular", t2.results?.toMutableList() ?: mutableListOf(), 2),
+                    MovieGroup("Upcoming", t3.results?.toMutableList() ?: mutableListOf(), 1)
                 )
             }
         )
