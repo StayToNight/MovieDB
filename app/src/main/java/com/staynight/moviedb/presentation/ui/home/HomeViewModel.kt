@@ -19,8 +19,7 @@ class HomeViewModel @Inject constructor(
     private val getPopularMoviesUseCase: GetPopularMoviesUseCase,
     private val getUpcomingMoviesUseCase: GetUpcomingMoviesUseCase,
     private val addToWatchlistUseCase: AddToWatchlistUseCase,
-    private val getWatchlistUseCase: GetWatchlistUseCase,
-    private val getHomePageUseCase: GetHomePageUseCase
+    private val getWatchlistUseCase: GetWatchlistUseCase
 ) : DisposeBagViewModel() {
 
     var topRatedState by mutableStateOf(State(title = "Top rated"))
