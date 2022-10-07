@@ -1,8 +1,8 @@
 package com.staynight.moviedb.di
 
-import com.staynight.moviedb.presentation.ui.auth.AuthFragment
-import com.staynight.moviedb.presentation.ui.home.HomeFragment
-import com.staynight.moviedb.presentation.ui.watchlist.WatchlistFragment
+import com.staynight.moviedb.presentation.ui.auth.AuthFragmentCompose
+import com.staynight.moviedb.presentation.ui.home.HomeFragmentCompose
+import com.staynight.moviedb.presentation.ui.watchlist.WatchlistFragmentCompose
 import com.staynight.moviedb.utils.helpers.ViewModelBuilder
 import dagger.Component
 import javax.inject.Singleton
@@ -19,7 +19,7 @@ import javax.inject.Singleton
         MapperModule::class]
 )
 interface AppComponent {
-    fun injectHomeFragment(homeFragment: HomeFragment)
-    fun injectAuthFragment(authFragment: AuthFragment)
-    fun injectWatchlistFragment(watchlistFragment: WatchlistFragment)
+    fun injectHomeFragment(homeFragment: HomeFragmentCompose)
+    fun injectAuthFragment(authFragment: AuthFragmentCompose)
+    fun injectWatchlistFragment(watchlistFragment: WatchlistFragmentCompose)
 }

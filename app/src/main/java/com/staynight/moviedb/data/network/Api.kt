@@ -31,7 +31,7 @@ interface Api {
     fun addToWatchlist(@Path("account_id") id: Int, @Body addToWatchlistRequestBody: AddToWatchlistRequestBody): Single<CodeMessageResponseData>
 
     @GET("account/{account_id}/watchlist/movies")
-    fun getWatchList(@Path("account_id") id: Int): Single<MoviesData>
+    fun getWatchList(@Path("account_id") id: Int, @Query("page") page: Int = 1): Single<MoviesData>
 
 }
 

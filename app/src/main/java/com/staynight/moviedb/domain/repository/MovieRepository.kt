@@ -2,7 +2,6 @@ package com.staynight.moviedb.domain.repository
 
 import com.staynight.moviedb.data.models.CodeMessageResponseData
 import com.staynight.moviedb.domain.models.Movies
-import com.staynight.moviedb.domain.models.MovieGroup
 import io.reactivex.Single
 
 interface MovieRepository {
@@ -15,6 +14,5 @@ interface MovieRepository {
         addToWatchlist: Boolean
     ): Single<CodeMessageResponseData>
 
-    fun getWatchlist(): Single<Movies>
-    fun getHomePage(): Single<List<MovieGroup>>
+    fun getWatchlist(page: Int = 1): Single<Movies>
 }

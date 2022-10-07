@@ -6,9 +6,7 @@ import com.staynight.moviedb.data.models.CodeMessageResponseData
 import com.staynight.moviedb.data.network.Api
 import com.staynight.moviedb.domain.models.Movies
 import com.staynight.moviedb.domain.repository.MovieRepository
-import com.staynight.moviedb.domain.models.MovieGroup
 import io.reactivex.Single
-import io.reactivex.functions.Function3
 import javax.inject.Inject
 
 class MovieRepositoryImpl @Inject constructor(
@@ -49,23 +47,8 @@ class MovieRepositoryImpl @Inject constructor(
         )
     }
 
-    override fun getWatchlist(): Single<Movies> {
-        return api.getWatchList(userId)
+    override fun getWatchlist(page: Int): Single<Movies> {
+        return api.getWatchList(userId, page = page)
             .map { moviesDataMapper.to(it) }
-    }
-
-    override fun getHomePage(): Single<List<MovieGroup>> {
-        return Single.zip(
-            getTopRatedMovies(),
-            getPopularMovies(),
-            getUpcomingMovies(),
-            Function3<Movies, Movies, Movies, List<MovieGroup>> { t1, t2, t3 ->
-                return@Function3 listOf(
-                    MovieGroup("Top Rated", t1.results?.toMutableList() ?: mutableListOf(), 1),
-                    MovieGroup("Popular", t2.results?.toMutableList() ?: mutableListOf(), 2),
-                    MovieGroup("Upcoming", t3.results?.toMutableList() ?: mutableListOf(), 1)
-                )
-            }
-        )
     }
 }

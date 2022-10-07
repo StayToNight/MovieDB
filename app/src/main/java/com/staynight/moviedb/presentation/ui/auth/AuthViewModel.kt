@@ -1,6 +1,9 @@
 package com.staynight.moviedb.presentation.ui.auth
 
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.staynight.moviedb.domain.usecase.AuthWithLoginUseCase
@@ -22,6 +25,7 @@ class AuthViewModel @Inject constructor(
     private val state = MutableLiveData<State>()
     val liveData: LiveData<State> = state
     var requestToken = ""
+    var buttonLoadingState by mutableStateOf(false)
 
     init {
         getRequestToken()
@@ -29,7 +33,7 @@ class AuthViewModel @Inject constructor(
 
 
     fun authWithLogin(login: String, password: String) {
-        state.value = State.ShowLoading
+        buttonLoadingState = true
         disposeBag.add(authWithLoginUseCase.authWithLogin(login, password, requestToken)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
@@ -48,12 +52,12 @@ class AuthViewModel @Inject constructor(
                 { value ->
                     Log.e("SESSION", value.sessionId)
                     saveSessionIDUseCase.saveSessionID(value.sessionId)
-                    state.value = State.HideLoading
+                    buttonLoadingState = false
                     state.value = State.Success
                 },
                 { error ->
                     Log.e("AUTH create", error.toString())
-                    state.value = State.Error
+                    buttonLoadingState = false
                 }
             )
         )
@@ -67,16 +71,13 @@ class AuthViewModel @Inject constructor(
                 { value -> requestToken = value.requestToken },
                 { error ->
                     Log.e("AUTH token", error.toString())
-                    state.value = State.Error
+                    buttonLoadingState = false
                 }
             )
         )
     }
 
     sealed class State {
-        object Error : State()
         object Success : State()
-        object ShowLoading : State()
-        object HideLoading : State()
     }
 }

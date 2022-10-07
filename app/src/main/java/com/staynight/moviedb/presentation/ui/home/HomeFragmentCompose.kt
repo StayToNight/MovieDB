@@ -1,83 +1,138 @@
 package com.staynight.moviedb.presentation.ui.home
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import android.view.ViewGroup
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import coil.compose.AsyncImage
 import com.staynight.moviedb.MovieApp
-import com.staynight.moviedb.databinding.FragmentHomeBinding
+import com.staynight.moviedb.R
 import com.staynight.moviedb.domain.models.Movie
 import com.staynight.moviedb.domain.models.Movies
-import com.staynight.moviedb.presentation.ui.watchlist.WatchlistFragment
-import com.staynight.moviedb.utils.binding.BindingFragment
+import com.staynight.moviedb.presentation.ui.watchlist.WatchlistFragmentCompose
 import com.staynight.moviedb.utils.extensions.navigateTo
 import com.staynight.moviedb.utils.helpers.Paginator
 import javax.inject.Inject
 
 private const val IMAGE_URL = "https://image.tmdb.org/t/p/w500/"
 
-class HomeFragment : BindingFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate) {
+class HomeFragmentCompose : Fragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private val viewModel by viewModels<HomeViewModel> { viewModelFactory }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        return ComposeView(requireContext()).apply {
+            setContent {
+                HomePage(viewModel) {
+                    navigateTo(WatchlistFragmentCompose(), parentFragmentManager)
+                }
+            }
+        }
+    }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity?.application as MovieApp).appComponent?.injectHomeFragment(this)
-        setupListeners()
+    }
+}
 
-        binding.myComposable.setContent {
-            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                HomeRVAnother(viewModel, viewModel.topRatedState, viewModel.paginatorTopRated)
-                HomeRVAnother(viewModel, viewModel.popularState, viewModel.paginatorPopular)
-                HomeRVAnother(viewModel, viewModel.upcomingState, viewModel.paginatorUpcoming)
-            }
+@Composable
+fun HomePage(viewModel: HomeViewModel, goToWatchlist: () -> Unit) {
+    Box(modifier = Modifier.background(colorResource(id = R.color.background_1))) {
+        Column(
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .padding(start = 29.dp)
+        ) {
+            TitleText()
+            SubTitleText(text = stringResource(id = R.string.find_movies))
+            HomeRVAnother(
+                viewModel,
+                viewModel.topRatedState,
+                viewModel.paginatorTopRated,
+                Modifier.padding(top = 50.dp)
+            )
+            HomeRVAnother(viewModel, viewModel.popularState, viewModel.paginatorPopular)
+            HomeRVAnother(viewModel, viewModel.upcomingState, viewModel.paginatorUpcoming)
+        }
+        FloatingActionButton(
+            onClick = goToWatchlist,
+            backgroundColor = colorResource(id = R.color.background_3),
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(end = 29.dp, bottom = 31.dp)
+                .width(134.dp)
+        ) {
+            Text(text = "Watch List")
         }
     }
+}
 
-    private fun setupObservers() {
+@Composable
+fun TitleText() {
+    Text(
+        text = "Movie DB App", style = TextStyle(
+            fontSize = 36.sp,
+            fontWeight = FontWeight(700),
+            color = colorResource(id = R.color.text),
+        ),
+        modifier = Modifier
+            .padding(top = 50.dp)
+    )
+}
 
-    }
-
-    private fun setupListeners() {
-        binding.apply {
-            btnWatchlist.setOnClickListener {
-                navigateTo(WatchlistFragment(), parentFragmentManager)
-            }
-        }
-    }
+@Composable
+fun SubTitleText(text: String) {
+    Text(
+        text = text, style = TextStyle(
+            fontSize = 18.sp,
+            fontWeight = FontWeight(700),
+            color = colorResource(id = R.color.text),
+        ),
+        modifier = Modifier
+            .padding(top = 22.dp)
+    )
 }
 
 @Composable
 fun HomeRVAnother(
     viewModel: HomeViewModel,
     state: HomeViewModel.State,
-    paginator: Paginator<Int, Movies>
+    paginator: Paginator<Int, Movies>,
+    modifier: Modifier = Modifier
 ) {
     val stateList = rememberLazyListState()
-    Column {
+    Column(modifier = modifier) {
         Text(
             text = state.title,
             style = TextStyle(fontWeight = FontWeight(700), color = Color.White, fontSize = 18.sp)
