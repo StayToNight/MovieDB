@@ -1,17 +1,18 @@
 package com.staynight.moviedb.presentation.ui.main
 
 import android.os.Bundle
-import com.staynight.moviedb.databinding.ActivityMainBinding
-import com.staynight.moviedb.presentation.ui.auth.AuthFragmentCompose
-import com.staynight.moviedb.utils.binding.BindingActivity
-import com.staynight.moviedb.utils.extensions.navigateTo
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import com.staynight.moviedb.MovieApp
+import com.staynight.moviedb.presentation.ui.Navigation
 
-class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::inflate) {
+class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(binding.root)
-        navigateTo(AuthFragmentCompose(), supportFragmentManager)
+        setContent {
+            Navigation(app = application as MovieApp)
+        }
     }
 
 }

@@ -22,17 +22,16 @@ class AuthViewModel @Inject constructor(
     private val saveSessionIDUseCase: SaveSessionIDUseCase
 ) :
     DisposeBagViewModel() {
-    private val state = MutableLiveData<State>()
-    val liveData: LiveData<State> = state
     var requestToken = ""
     var buttonLoadingState by mutableStateOf(false)
+    var loginSuccess by mutableStateOf(false)
 
     init {
         getRequestToken()
     }
 
-
     fun authWithLogin(login: String, password: String) {
+        getRequestToken()
         buttonLoadingState = true
         disposeBag.add(authWithLoginUseCase.authWithLogin(login, password, requestToken)
             .observeOn(AndroidSchedulers.mainThread())
@@ -53,7 +52,7 @@ class AuthViewModel @Inject constructor(
                     Log.e("SESSION", value.sessionId)
                     saveSessionIDUseCase.saveSessionID(value.sessionId)
                     buttonLoadingState = false
-                    state.value = State.Success
+                    loginSuccess = true
                 },
                 { error ->
                     Log.e("AUTH create", error.toString())
@@ -71,13 +70,8 @@ class AuthViewModel @Inject constructor(
                 { value -> requestToken = value.requestToken },
                 { error ->
                     Log.e("AUTH token", error.toString())
-                    buttonLoadingState = false
                 }
             )
         )
-    }
-
-    sealed class State {
-        object Success : State()
     }
 }

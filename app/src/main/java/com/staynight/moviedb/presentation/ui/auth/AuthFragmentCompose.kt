@@ -1,10 +1,6 @@
 package com.staynight.moviedb.presentation.ui.auth
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.Toast
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,60 +11,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
-import com.staynight.moviedb.MovieApp
+import androidx.navigation.NavController
 import com.staynight.moviedb.R
-import com.staynight.moviedb.presentation.ui.home.HomeFragmentCompose
-import com.staynight.moviedb.utils.extensions.navigateTo
-import javax.inject.Inject
-
-class AuthFragmentCompose : Fragment() {
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-    private val viewModel by viewModels<AuthViewModel> { viewModelFactory }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        return ComposeView(requireContext()).apply {
-            setContent {
-                LoginField(viewModel = viewModel)
-            }
-        }
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        (activity?.application as MovieApp).appComponent?.injectAuthFragment(this)
-        setupObservers()
-    }
-
-    private fun setupObservers() {
-        viewModel.liveData.observe(viewLifecycleOwner) { state ->
-            when (state) {
-                AuthViewModel.State.Success -> {
-                    Toast.makeText(context, "Authorized", Toast.LENGTH_LONG).show()
-                    navigateTo(HomeFragmentCompose(), parentFragmentManager)
-                }
-            }
-        }
-    }
-}
 
 @Composable
-fun LoginField(
-    modifier: Modifier = Modifier,
-    viewModel: AuthViewModel
+fun LoginField (
+    viewModel: AuthViewModel,
+    navController: NavController
 ) {
+    Log.e("TAG", viewModel.toString() )
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxHeight()
             .background(colorResource(id = R.color.background_1))
             .padding(top = 50.dp),
@@ -78,9 +34,12 @@ fun LoginField(
         var password by remember { mutableStateOf("nurtas123") }
         CustomTextField(text = username, onChange = { username = it })
         CustomTextField(text = password, onChange = { password = it })
-        CustomButton(loadingState = viewModel.buttonLoadingState, authClick = {
+        CustomButton(viewModel = viewModel, authClick = {
             viewModel.authWithLogin(username, password)
         })
+    }
+    if(viewModel.loginSuccess){
+        navController.navigate("NavigationDestination.Screen2.destination")
     }
 }
 
@@ -101,7 +60,7 @@ fun CustomTextField(modifier: Modifier = Modifier, text: String, onChange: (Stri
 }
 
 @Composable
-fun CustomButton(authClick: () -> Unit, loadingState: Boolean) {
+fun CustomButton(authClick: () -> Unit, viewModel: AuthViewModel) {
     Button(
         onClick = authClick,
         modifier = Modifier
@@ -113,7 +72,7 @@ fun CustomButton(authClick: () -> Unit, loadingState: Boolean) {
             .shadow(0.dp),
         colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.background_2))
     ) {
-        if (loadingState) {
+        if (viewModel.buttonLoadingState) {
             CircularProgressIndicator()
         } else {
             Text(text = "LOGIN", style = TextStyle(color = Color.White))

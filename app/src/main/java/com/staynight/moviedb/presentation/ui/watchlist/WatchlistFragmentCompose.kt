@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import com.ramcosta.composedestinations.annotation.Destination
 import com.staynight.moviedb.MovieApp
 import com.staynight.moviedb.presentation.ui.home.MovieItem
 import com.staynight.moviedb.presentation.ui.home.SubTitleText
@@ -42,7 +43,7 @@ class WatchlistFragmentCompose: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity?.application as MovieApp).appComponent?.injectWatchlistFragment(this)
+       // (activity?.application as MovieApp).appComponent?.injectWatchlistFragment(this)
     }
 }
 

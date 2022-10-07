@@ -69,12 +69,14 @@ class HomeViewModel @Inject constructor(
     )
 
     init {
-        loadNextItems(paginatorTopRated)
-        loadNextItems(paginatorPopular)
-        loadNextItems(paginatorUpcoming)
+        Log.e("TAG", "initing: ", )
+//        loadNextItems(paginatorTopRated)
+//        loadNextItems(paginatorPopular)
+//        loadNextItems(paginatorUpcoming)
     }
 
     fun loadNextItems(paginator: Paginator<Int, Movies>) {
+        Log.e("TAG", "loadNextItems: ", )
         disposeBag.add(Observable.just {
             paginator.loadNextItems()
         }
