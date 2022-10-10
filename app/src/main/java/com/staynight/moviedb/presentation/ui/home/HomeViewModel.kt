@@ -9,11 +9,13 @@ import com.staynight.moviedb.domain.models.Movies
 import com.staynight.moviedb.domain.usecase.*
 import com.staynight.moviedb.utils.helpers.DisposeBagViewModel
 import com.staynight.moviedb.utils.helpers.Paginator
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
+@HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getTopRatedMoviesUseCase: GetTopRatedMoviesUseCase,
     private val getPopularMoviesUseCase: GetPopularMoviesUseCase,
@@ -70,9 +72,9 @@ class HomeViewModel @Inject constructor(
 
     init {
         Log.e("TAG", "initing: ", )
-//        loadNextItems(paginatorTopRated)
-//        loadNextItems(paginatorPopular)
-//        loadNextItems(paginatorUpcoming)
+        loadNextItems(paginatorTopRated)
+        loadNextItems(paginatorPopular)
+        loadNextItems(paginatorUpcoming)
     }
 
     fun loadNextItems(paginator: Paginator<Int, Movies>) {

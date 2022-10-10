@@ -4,17 +4,17 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.staynight.moviedb.domain.usecase.AuthWithLoginUseCase
 import com.staynight.moviedb.domain.usecase.CreateNewSessionUseCase
 import com.staynight.moviedb.domain.usecase.GetRequestTokenUseCase
 import com.staynight.moviedb.domain.usecase.SaveSessionIDUseCase
 import com.staynight.moviedb.utils.helpers.DisposeBagViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
+@HiltViewModel
 class AuthViewModel @Inject constructor(
     private val getRequestTokenUseCase: GetRequestTokenUseCase,
     private val authWithLoginUseCase: AuthWithLoginUseCase,
@@ -24,26 +24,27 @@ class AuthViewModel @Inject constructor(
     DisposeBagViewModel() {
     var requestToken = ""
     var buttonLoadingState by mutableStateOf(false)
-    var loginSuccess by mutableStateOf(false)
 
     init {
         getRequestToken()
     }
 
-    fun authWithLogin(login: String, password: String) {
+    fun authWithLogin(login: String, password: String, authClick: () -> Unit) {
         getRequestToken()
         buttonLoadingState = true
         disposeBag.add(authWithLoginUseCase.authWithLogin(login, password, requestToken)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
             .subscribe(
-                { value -> createNewSession(value.requestToken) },
+                { value ->
+                    createNewSession(value.requestToken, authClick)
+                },
                 { error -> Log.e("AUTH auth", error.printStackTrace().toString()) }
             )
         )
     }
 
-    private fun createNewSession(requestToken: String) {
+    private fun createNewSession(requestToken: String, authClick: () -> Unit) {
         disposeBag.add(createNewSessionUseCase.createNewSession(requestToken)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
@@ -52,7 +53,7 @@ class AuthViewModel @Inject constructor(
                     Log.e("SESSION", value.sessionId)
                     saveSessionIDUseCase.saveSessionID(value.sessionId)
                     buttonLoadingState = false
-                    loginSuccess = true
+                    authClick.invoke()
                 },
                 { error ->
                     Log.e("AUTH create", error.toString())

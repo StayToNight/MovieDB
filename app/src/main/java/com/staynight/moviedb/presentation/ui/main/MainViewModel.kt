@@ -5,10 +5,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.staynight.moviedb.domain.usecase.GetRequestTokenUseCase
 import com.staynight.moviedb.utils.helpers.DisposeBagViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
+@HiltViewModel
 class MainViewModel @Inject constructor(private val getRequestTokenUseCase: GetRequestTokenUseCase) :
     DisposeBagViewModel() {
     private val state = MutableLiveData<String>()

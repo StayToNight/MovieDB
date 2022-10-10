@@ -1,6 +1,5 @@
 package com.staynight.moviedb.presentation.ui.auth
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,15 +13,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.staynight.moviedb.R
 
 @Composable
-fun LoginField (
-    viewModel: AuthViewModel,
+fun LoginField(
+    viewModel: AuthViewModel = hiltViewModel(),
     navController: NavController
 ) {
-    Log.e("TAG", viewModel.toString() )
     Column(
         modifier = Modifier
             .fillMaxHeight()
@@ -35,11 +34,11 @@ fun LoginField (
         CustomTextField(text = username, onChange = { username = it })
         CustomTextField(text = password, onChange = { password = it })
         CustomButton(viewModel = viewModel, authClick = {
-            viewModel.authWithLogin(username, password)
+            viewModel.authWithLogin(
+                username,
+                password
+            ) { navController.navigate("home") }
         })
-    }
-    if(viewModel.loginSuccess){
-        navController.navigate("NavigationDestination.Screen2.destination")
     }
 }
 

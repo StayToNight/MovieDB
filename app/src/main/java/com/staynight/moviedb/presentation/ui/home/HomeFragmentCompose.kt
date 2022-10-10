@@ -1,6 +1,5 @@
 package com.staynight.moviedb.presentation.ui.home
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -17,11 +16,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.staynight.moviedb.R
 import com.staynight.moviedb.domain.models.Movie
@@ -32,9 +32,9 @@ private const val IMAGE_URL = "https://image.tmdb.org/t/p/w500/"
 
 @Composable
 fun HomePage(
-    viewModel: HomeViewModel
+    viewModel: HomeViewModel = hiltViewModel(),
+    navController: NavController
 ) {
-    Log.e("TAG", viewModel.toString() )
     Box(modifier = Modifier
         .background(colorResource(id = R.color.background_1))
         .fillMaxSize()) {
@@ -44,18 +44,20 @@ fun HomePage(
                 .padding(start = 29.dp)
         ) {
             TitleText()
-            SubTitleText(text = stringResource(id = R.string.find_movies))
+            SubTitleText(text = "Find your movies")
             HomeRVAnother(
                 viewModel,
-//                viewModel.topRatedState,
-//                viewModel.paginatorTopRated,
+                viewModel.topRatedState,
+                viewModel.paginatorTopRated,
                 Modifier.padding(top = 50.dp)
             )
-//            HomeRVAnother(viewModel, viewModel.popularState, viewModel.paginatorPopular)
-//            HomeRVAnother(viewModel, viewModel.upcomingState, viewModel.paginatorUpcoming)
+            HomeRVAnother(viewModel, viewModel.popularState, viewModel.paginatorPopular)
+            HomeRVAnother(viewModel, viewModel.upcomingState, viewModel.paginatorUpcoming)
         }
         FloatingActionButton(
-            onClick = {},
+            onClick = {
+                      navController.navigate("watchlist")
+            },
             backgroundColor = colorResource(id = R.color.background_3),
             modifier = Modifier
                 .align(Alignment.BottomEnd)
@@ -65,10 +67,6 @@ fun HomePage(
             Text(text = "Watch List")
         }
     }
-
-//    viewModel.loadNextItems(viewModel.paginatorTopRated)
-//    viewModel.loadNextItems(viewModel.paginatorPopular)
-//    viewModel.loadNextItems(viewModel.paginatorUpcoming)
 }
 
 @Composable
@@ -100,12 +98,10 @@ fun SubTitleText(text: String) {
 @Composable
 fun HomeRVAnother(
     viewModel: HomeViewModel,
-//    state: HomeViewModel.State,
-//    paginator: Paginator<Int, Movies>,
+    state: HomeViewModel.State,
+    paginator: Paginator<Int, Movies>,
     modifier: Modifier = Modifier
 ) {
-    val state = viewModel.topRatedState
-    val paginator = viewModel.paginatorTopRated
     val stateList = rememberLazyListState()
     Column(modifier = modifier) {
         Text(
@@ -127,7 +123,6 @@ fun HomeRVAnother(
             }
         }
     }
-    viewModel.loadNextItems(paginator)
 }
 
 @Composable

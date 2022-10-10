@@ -10,11 +10,13 @@ import com.staynight.moviedb.domain.usecase.GetWatchlistUseCase
 import com.staynight.moviedb.presentation.ui.home.HomeViewModel
 import com.staynight.moviedb.utils.helpers.DisposeBagViewModel
 import com.staynight.moviedb.utils.helpers.Paginator
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
+@HiltViewModel
 class WatchlistViewModel @Inject constructor(
     private val getWatchlistUseCase: GetWatchlistUseCase,
     private val addToWatchlistUseCase: AddToWatchlistUseCase

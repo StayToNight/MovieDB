@@ -1,18 +1,17 @@
 package com.staynight.moviedb.di
 
-import android.app.Application
-import android.content.Context
 import dagger.Module
-import dagger.Provides
-import javax.inject.Singleton
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 
 @Module
-class AppModule(private val application: Application) {
-    @Provides
-    @Singleton
-    fun providesApplication(): Application = application
-
-    @Provides
-    @Singleton
-    fun providesApplicationContext(): Context = application
+@InstallIn(SingletonComponent::class)
+class AppModule() {
+//    @Provides
+//    @Singleton
+//    fun providesApplication(): Application = application
+//
+//    @Provides
+//    @Singleton
+//    fun providesApplicationContext(): Context = application
 }
