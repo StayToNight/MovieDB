@@ -33,7 +33,7 @@ fun WatchList(viewModel: WatchlistViewModel = hiltViewModel()){
                 if (i >= state.movies.size - 1 && !state.endReached && !state.isLoading) {
                     viewModel.loadNextItems(paginator)
                 }
-                MovieItem(movie = item, modifier = Modifier.padding(vertical = 10.dp))
+                MovieItem(movie = item, modifier = Modifier.padding(vertical = 10.dp)){}
             }
             item {
                 if (state.isLoading) {

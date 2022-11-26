@@ -1,16 +1,16 @@
 package com.staynight.moviedb.presentation.ui.home
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,9 +35,11 @@ fun HomePage(
     viewModel: HomeViewModel = hiltViewModel(),
     navController: NavController
 ) {
-    Box(modifier = Modifier
-        .background(colorResource(id = R.color.background_1))
-        .fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .background(colorResource(id = R.color.background_1))
+            .fillMaxSize()
+    ) {
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
@@ -45,18 +47,44 @@ fun HomePage(
         ) {
             TitleText()
             SubTitleText(text = "Find your movies")
+            var searchText by remember { mutableStateOf("") }
+
+            Box(modifier = Modifier) {
+                TextField(
+                    value = searchText,
+                    onValueChange = { searchText = it },
+                    singleLine = true,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(colorResource(id = R.color.background_3))
+                        .border(color = Color.Black, width = 1.dp),
+                    textStyle = TextStyle(
+                        fontSize = 16.sp
+                    )
+
+                )
+            }
             HomeRVAnother(
                 viewModel,
                 viewModel.topRatedState,
                 viewModel.paginatorTopRated,
                 Modifier.padding(top = 50.dp)
-            )
-            HomeRVAnother(viewModel, viewModel.popularState, viewModel.paginatorPopular)
-            HomeRVAnother(viewModel, viewModel.upcomingState, viewModel.paginatorUpcoming)
+            ) { navController.navigate("details") }
+            HomeRVAnother(
+                viewModel,
+                viewModel.popularState,
+                viewModel.paginatorPopular
+            ) { navController.navigate("details") }
+            HomeRVAnother(
+                viewModel,
+                viewModel.upcomingState,
+                viewModel.paginatorUpcoming
+            ) { navController.navigate("details") }
         }
         FloatingActionButton(
             onClick = {
-                      navController.navigate("watchlist")
+                navController.navigate("watchlist")
             },
             backgroundColor = colorResource(id = R.color.background_3),
             modifier = Modifier
@@ -100,7 +128,8 @@ fun HomeRVAnother(
     viewModel: HomeViewModel,
     state: HomeViewModel.State,
     paginator: Paginator<Int, Movies>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    detailClick: () -> Unit
 ) {
     val stateList = rememberLazyListState()
     Column(modifier = modifier) {
@@ -114,7 +143,7 @@ fun HomeRVAnother(
                 if (i >= state.movies.size - 1 && !state.endReached && !state.isLoading) {
                     viewModel.loadNextItems(paginator)
                 }
-                MovieItem(movie = item)
+                MovieItem(movie = item) { detailClick.invoke() }
             }
             item {
                 if (state.isLoading) {
@@ -126,8 +155,10 @@ fun HomeRVAnother(
 }
 
 @Composable
-fun MovieItem(movie: Movie, modifier: Modifier = Modifier) {
-    Row(modifier = modifier.padding(end = 15.dp)) {
+fun MovieItem(movie: Movie, modifier: Modifier = Modifier, detailsClick: () -> Unit) {
+    Row(modifier = modifier
+        .padding(end = 15.dp)
+        .clickable { detailsClick.invoke() }) {
         AsyncImage(
             model = IMAGE_URL + movie.posterPath,
             contentDescription = "",
